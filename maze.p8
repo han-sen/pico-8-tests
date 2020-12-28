@@ -9,7 +9,9 @@ function _init()
 		sprite = 66,
 		speed = 1,
 		size = 1,
-		flip = true,
+		width = 8,
+		height = 8,
+		flipped = false,
 		dx = 0,
 		dy = 0,
 		mdx = 2,
@@ -22,34 +24,99 @@ function _init()
 		falling = false,
 		landing = false
 	}
+	world = {
+		gravity = 0.3,
+		friction = 0.85
+	}
 end
 
 function _update()
-	movePlayer()
+	player_update()
 end
 
 function _draw()
 	cls()
 	map(0, 0, 0, 0, 128,64)
-	drawPlayer()
+	draw_player()
 end
 
-function movePlayer()
-	if btn(0) then 
-		player.x -= player.speed
+function player_update()
+	player.dy += world.gravity
+	player.dx *= world.friction
+	if btn(0) then -- left
+		player.dx -= player.acc
+		player.running = true
+		player.flipped = true
 	end
-	if btn(1) then 
-		player.x += player.speed
+	if btn(0) then -- right
+		player.dx += player.acc
+		player.running = true
+		player.flipped = false
 	end
+	if btnp(5) and player.landed then -- if jump was pressed and not in the air
+		player.dy -= player.accy
+		player.landed = false
+	end
+	-- check for collisions
+	if player.dy > 0 then -- falling
+		player.falling = true
+		player.landed = false
+		player.jumping = false
+		if map_collide(player, "down", 0) then 
+			player.landed = true
+			player.falling = false
+			player.dy = 0
+			player.y -= (player.y + player.height) % 8 -- fallback to prevent getting stuck
+		end
+	end
+	-- update the player position
+	player.x += player.dx 
+	player.y += player.dy 
 end
 
-function drawPlayer()
-	if btn(1) then 
-		player.flip = false
-	elseif btn(0) then 
-		player.flip = true 
-	end
+function draw_player()
 	spr(player.sprite,player.x,player.y, player.size, player.size, player.flip)	
+end
+
+function map_collide(obj, dir, flag)
+	local x1, y1, x2, y2 = 0
+	-- append invisible rectangle to character, position based on current direction
+	if dir == 'left' then
+		x1 = obj.x - 1
+		y1 = obj.y
+		x2 = obj.x
+		y2 = obj.y + obj.height - 1
+	elseif dir == 'right' then
+		x1 = obj.x + obj.width
+		y1 = obj.y 
+		x2 = obj.x + obj.width + 1
+		y2 = obj.y + obj.height - 1
+	elseif dir == 'up' then
+		x1 = obj.x + obj.width
+		y1 = obj.y - 1
+		x2 = obj.x + obj.width - 1
+		y2 = obj.y 
+	elseif dir == 'down' then
+		x1 = obj.x
+		y1 = obj.y + obj.height
+		x2 = obj.x + obj.width 
+		y2 = obj.y + obj.height
+	end
+	-- convert pixel size to tile size
+	x1 /= 8
+	x2 /= 8
+	y1 /= 8
+	y2 /= 8
+	-- check each corner of rect for collision with flagged tiles
+	if fget(mget(x1, y1),flag)
+	or fget(mget(x1, y2),flag)
+	or fget(mget(x2, y1),flag)
+	or fget(mget(x2, y2),flag) then
+		return true
+	else
+		return false
+	end
+	
 end
 
 __gfx__
@@ -114,6 +181,9 @@ __gfx__
 00000000000000000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000028851000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000082010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+__gff__
+0000000000000000000001000000000000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0e0e0e0e0e0e0e0e0e0e2222222222220a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e2222222222221b00000000000000000000000000001b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
