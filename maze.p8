@@ -56,9 +56,12 @@ function player_update()
 		player.running = true
 		player.flipped = false
 	end
-	if btnp(5) or btnp(2) and player.landed then -- if jump was pressed and not in the air
+	if  btnp(2) and player.landed then -- if jump was pressed and not in the air
 		player.dy -= player.accy
 		player.landed = false
+	end
+	if not btn(0) and not btn(1) and not btnp(2) then
+		player.running = false
 	end
 	-- check for collisions
 	-- y axis
@@ -114,7 +117,7 @@ function player_animate()
 			end
 		end
 	else -- idle animation
-		if time() - player.anim > 0.3 then
+		if time() - player.anim > 0.6 then
 			player.anim = time()
 			player.sprite += 1
 			if player.sprite > 76 or player.sprite < 73 then
