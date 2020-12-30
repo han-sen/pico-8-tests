@@ -86,10 +86,14 @@ function _draw()
 	draw_game_key()
 	draw_fountains()
 	draw_player()
+	draw_debug()
+end
+
+-- DEBUG OUTPUT
+function draw_debug()
 	print(world.current_level, 128 * (world.current_level - 1), 10)
 	print(fountains.loc[world.current_level].active, 128 * (world.current_level - 1), 20)
 	print(player.dy, 128 * (world.current_level - 1), 30)
-
 end
 
 -- UTILITY FUNCTIONS
@@ -198,6 +202,7 @@ function player_update()
 		player.jumping = true
 		if map_collide(player, "up", 0) then
 			player.dy = 0
+			player.dx += player.accy
 		end
 	end
 	-- x axis
