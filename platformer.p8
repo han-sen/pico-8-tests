@@ -75,6 +75,7 @@ function _update()
 	check_boost()
 	check_level()
 	check_solve()
+	check_dmg()
 	-- game_key_animate()
 	camera(128 * (world.current_level - 1), game_camera.cam_y)
 end
@@ -97,7 +98,7 @@ function check_level()
 	world.current_level = ceil(player.x / 128)
 end
 
-function check_solve()
+function check_solve() -- check if player has unlocked level
 	local level = world.current_level
 	if map_collide(player, "down", 3)
 	or map_collide(player, "right", 3)
@@ -110,13 +111,20 @@ function check_solve()
 	end
 end
 
-function check_boost()
+function check_boost() -- check if on boost tile
 	if map_collide(player, 'down', 4) then
 		player.dy -= player.accy * 1.5
 		player.landed = false
 	end
 end
 
+function check_dmg() -- check if on enemy tile
+	if map_collide(player, 'right', 1) then
+		player.sprite = 48
+		player.dx = 0
+		player.dy -= 1
+	end
+end
  
 function game_key_animate()
 	if time() - game_keys.anim > 0.3 then
