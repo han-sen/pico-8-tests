@@ -89,7 +89,7 @@ end
 function _update()
 	check_level()
 	check_solve()
-	-- check_dmg()
+	check_dmg()
 	player_update()
 	check_boost()
 	player_animate()
@@ -147,8 +147,8 @@ function check_dmg() -- check if on enemy tile
 		player.sprite = 48
 		player.dx = 0
 		player.dy = 0
-		player.x = 10,
-		player.y = 90,
+		player.x = 10 + ((world.current_level - 1) * world.level_size)
+		player.y = 90
 	end
 end
  
