@@ -108,7 +108,8 @@ function _init()
 	}
 	effects = {}
 	particles = {
-		fire = {8,9,10,5}
+		death_fx = {8,2,5},
+		dust_fx = {6,5}
 	}
 	ghosts = {}
 end
@@ -184,7 +185,7 @@ function check_dmg() -- check if on enemy tile
 		player.dx = 0
 		player.dy = 0
 		-- sfx(8)
-		fire(player.x, player.y, 16, particles.fire, 4)
+		death_fx(player.x, player.y, 16, particles.death_fx, 4)
 		-- return player to starting position
 		player.x = 10 + ((world.current_level - 1) * world.level_size)
 		player.y = 90
@@ -296,6 +297,7 @@ function player_update()
 	if  btnp(2) and player.landed then -- if jump was pressed and not in the air
 		player.dy -= player.accy
 		player.landed = false
+		dust_fx(player.x, player.y + player.height, 4, particles.dust_fx, 4)
 	end
 	if not btn(0) and not btn(1) and not btnp(2) then
 		player.running = false
@@ -462,8 +464,8 @@ function draw_fx()
     end
 end
 
--- fire effect
-function fire(x,y,w,c_table,num)
+-- player death effect
+function death_fx(x,y,w,c_table,num)
     for i=0, num do
         --settings
         add_fx(
@@ -481,6 +483,24 @@ function fire(x,y,w,c_table,num)
     end
 end
 
+-- kick dust fx
+function dust_fx(x,y,w,c_table, num)
+	for i=0, num do
+        --settings
+        add_fx(
+            x+rnd(w)-w/2,  -- x
+            y+rnd(w)-w/2,  -- y
+            6+rnd(10),-- die
+            -0.25,         -- dx
+            -0.25,       -- dy
+            false,     -- gravity
+            false,     -- grow
+            true,      -- shrink
+            1,         -- radius
+            c_table    -- color_table
+        )
+    end
+end
 __gfx__
 00000000000000000000000000111100000000000000000000000000000000000008800000288200101110101110101101101010000000001010010100000000
 00000000000000000000000010000001005555000000000000555500000000000080080002888820100100001001000101010110000000000111111000000000
