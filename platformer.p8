@@ -108,14 +108,14 @@ function _init()
 	}
 	effects = {}
 	particles = {
-		death_fx = {8,2,5},
-		dust_fx = {6,5}
+		death_fx = {8,2,5}, -- color arrays
+		dust_fx = {6,5},
+		wind_fx = {6,5}
 	}
 	ghosts = {}
 end
 
 function _update()
-	-- roll_cam()
 	check_level()
 	check_solve()
 	check_dmg()
@@ -140,10 +140,10 @@ end
 
 -- DEBUG OUTPUT
 function draw_debug()
-	print(world.current_level, 128 * (world.current_level - 1), 10)
+	print(world.current_level, 128 * (world.current_level - 1), 0)
 	-- print(fountains.loc[world.current_level].active, 128 * (world.current_level - 1), 20)
 	-- print(player.dy, 128 * (world.current_level - 1), 30)
-	-- print(#ghosts, 128 * (world.current_level - 1), 30)
+	print(#ghosts, 128 * (world.current_level - 1), 30)
 end
 
 -- UTILITY FUNCTIONS
@@ -218,7 +218,18 @@ function screen_shake()
 	if game_camera.offset < 0.05 then
 		game_camera.offset = 0
 	end
-  end
+end
+
+function add_ghost()
+	local x = player.x
+	local y = player.y
+	local cor = { x = x, y = y }
+	add(ghosts, cor) -- add new ghost
+	-- cleanup old ghosts
+	if #ghosts > 1 then
+		del(ghosts, ghosts[1]) 
+	end
+end
 
 -- DRAW FUNCTIONS
  
@@ -253,12 +264,6 @@ end
 
 function draw_player()
 	spr(player.sprite,player.x,player.y, player.size, player.size, player.flipped)	
-end
-
-function add_ghost()
-	local x = player.x
-	local y = player.y
-	ghosts[#ghosts+1] = { x = x, y = y } -- push new ghost obj to table
 end
 
 function draw_ghosts()
@@ -404,7 +409,7 @@ end
 
 -- PARTICLE SYSTEM
 
-function add_fx(x,y,die,dx,dy,grav,grow,shrink,r,c_table)
+function add_fx(x,y,die,dx,dy,grav,grow,shrink,r,c_t)
     local fx={
         x=x,
         y=y,
@@ -417,7 +422,7 @@ function add_fx(x,y,die,dx,dy,grav,grow,shrink,r,c_table)
         shrink=shrink,
         r=r,
         c=0,
-        c_table=c_table
+        c_t=c_t
     }
     add(effects,fx)
 end
@@ -429,17 +434,17 @@ function update_fx()
         if fx.t>fx.die then del(effects,fx) end
 
         --color depends on lifetime
-        if fx.t/fx.die < 1/#fx.c_table then
-            fx.c=fx.c_table[1]
+        if fx.t/fx.die < 1/#fx.c_t then
+            fx.c=fx.c_t[1]
 
-        elseif fx.t/fx.die < 2/#fx.c_table then
-            fx.c=fx.c_table[2]
+        elseif fx.t/fx.die < 2/#fx.c_t then
+            fx.c=fx.c_t[2]
 
-        elseif fx.t/fx.die < 3/#fx.c_table then
-            fx.c=fx.c_table[3]
+        elseif fx.t/fx.die < 3/#fx.c_t then
+            fx.c=fx.c_t[3]
 
         else
-            fx.c=fx.c_table[4]
+            fx.c=fx.c_t[4]
         end
 
         --physics
@@ -465,7 +470,7 @@ function draw_fx()
 end
 
 -- player death effect
-function death_fx(x,y,w,c_table,num)
+function death_fx(x,y,w,c_t,num)
     for i=0, num do
         --settings
         add_fx(
@@ -478,13 +483,13 @@ function death_fx(x,y,w,c_table,num)
             false,     -- grow
             true,      -- shrink
             3,         -- radius
-            c_table    -- color_table
+            c_t    -- color_table
         )
     end
 end
 
 -- kick dust fx
-function dust_fx(x,y,w,c_table, num)
+function dust_fx(x,y,w,c_t, num)
 	for i=0, num do
         --settings
         add_fx(
@@ -497,7 +502,25 @@ function dust_fx(x,y,w,c_table, num)
             false,     -- grow
             true,      -- shrink
             1,         -- radius
-            c_table    -- color_table
+            c_t    -- color_table
+        )
+    end
+end
+
+function wind_fx(x,y,w,c_t, num)
+	for i=0, num do
+        --settings
+        add_fx(
+            x+rnd(w)-w/2,  -- x
+            y+rnd(w)-w/2,  -- y
+            6+rnd(10),-- die
+            -0.25,         -- dx
+            -0.25,       -- dy
+            false,     -- gravity
+            false,     -- grow
+            true,      -- shrink
+            1,         -- radius
+            c_t    -- color_table
         )
     end
 end
@@ -559,7 +582,7 @@ ccc00ccc000000000000000000000000000000000000000000000000000000000000000000000000
 00500500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00600600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __gff__
-0008040000000000000001000000000000010100000808080800000100000000020200000000000000000000000000000001010101000000000000000200000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000
+0008040000000000000001010000000000010100000808080800000100000000020200000000000000000000000000000001010101000000000000000200000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0e0e0e0e0e0e0e0e0e0e2222222222220a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1b000013140000000000000000000000000a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a3c3c3c3c3c3c3c3c3c3c3c3c3c3c0a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
