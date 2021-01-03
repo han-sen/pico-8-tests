@@ -1,0 +1,8 @@
+author = "Mike Hansen"
+cart = "strayhorn.p8"
+description = ""
+name = "strayhorn"
+open_pico = true
+src_dir = "src"
+version = "1.0.0"
+watch = false
