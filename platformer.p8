@@ -11,7 +11,7 @@ __lua__
 
 function _init()
 	-- music(3)
-	offset = 128 * 0
+	offset = 128 * 5
 	player = {
 		x = 10 + offset,
 		y = 90,
@@ -200,7 +200,7 @@ function _init()
 		}
 	}
 	game_camera = {
-		cam_x = 128,
+		cam_x = 0,
 		cam_y = 0,
 		offset = 0
 	}
@@ -208,6 +208,7 @@ function _init()
 		gravity = 0.3,
 		friction = 0.75,
 		current_level = 1,
+		current_row = 1,
 		level_size = 128,
 		map_start = 0,
 		map_end = 128,
@@ -221,9 +222,18 @@ function _init()
 		fire_fx = {8,2,0},
 		fire_fx_xl = {8,8,2}
 	}
-	bullets = {
-
+	turrets = {
+		anim = 0,
+		loc = {
+			{
+				level = 6,
+				active = false,
+				x = 40,
+				y = 32
+			}
+		}
 	}
+	bullets = {}
 	ghosts = {}
 end
 
@@ -251,6 +261,7 @@ function _draw()
 	draw_turbines()
 	draw_ghosts()
 	draw_player()
+	draw_turrets()
 	draw_bullets()
 	draw_fx()
 	roll_cam()
@@ -263,6 +274,8 @@ function draw_debug()
 	-- print(fountains.loc[world.current_level].active, 128 * (world.current_level - 1), 20)
 	-- print(player.dx, 128 * (world.current_level - 1), 30)
 	-- print(#ghosts, 128 * (world.current_level - 1), 30)
+	print(#bullets, 128 * (world.current_level - 1), 30)
+
 end
 
 -- UTILITY FUNCTIONS
@@ -285,6 +298,11 @@ function check_solve() -- check if player has unlocked level
 		end
 		fountains.loc[level].active = true
 		game_keys.loc[level].found = true
+		for turret in all(turrets.loc) do 
+			if turret.level == level then
+				turret.active = true
+			end
+		end
 	end
 	if map_collide(player, 'down', 2) and fountains.loc[level].active then -- if solved and jumping into portal
 		player.x = (world.current_level * world.level_size) + player.width
@@ -313,9 +331,14 @@ function check_dmg() -- check if on enemy tile
 		-- return player to starting position
 		player.x = 10 + ((world.current_level - 1) * world.level_size)
 		player.y = 90
-		-- reset key and portal
+		-- reset key and portal and turrets
 		fountains.loc[world.current_level].active = false
 		game_keys.loc[world.current_level].found = false
+		for turret in all(turrets.loc) do 
+			if turret.level == world.current_level then
+				turret.active = false
+			end
+		end
 	end
 end
 
@@ -431,7 +454,7 @@ function player_update()
 	end
 	if btnp(5) then 
 		local shooter = { x = 30, y = 30}
-		add_bullet(player, shooter, 1)
+		add_bullet(player, shooter, 2)
 	end
 	if not btn(0) and not btn(1) and not btnp(2) then
 		player.running = false
@@ -742,8 +765,6 @@ function run_flames()
 	end
 end
 
-
-
 function animate_turbines()
 	if time() - turbines.sp_anim > 0.125 then
 		turbines.sp_anim = time()
@@ -770,7 +791,8 @@ function add_bullet(player, shooter, bullet_speed)
 		x = shooter.x,
 		y = shooter.y,
 		dx = b_vx,
-		dy = b_vy
+		dy = b_vy,
+		level = world.current_level
 	}
 	add(bullets, bullet)
 end
@@ -779,12 +801,33 @@ function update_bullets()
 	for b in all(bullets) do 
 		b.x += b.dx 
 		b.y += b.dy
+		if b.y < game_camera.cam_y 
+		or b.y > game_camera.cam_y + (world.level_size * world.current_row) then
+			del(bullets, b)
+		end
 	end
 end
 
 function draw_bullets()
 	for b in all(bullets) do 
-		circfill(b.x, b.y, 3, 1)
+		circfill(b.x, b.y, 1, 14)
+	end
+end
+
+function draw_turrets()
+	local level = world.current_level
+	if time() - turrets.anim > 1.5 then 
+		turrets.anim = time() 
+		for turret in all(turrets.loc) do 
+			if turret.level == level and turret.active then
+				local t_x = turret.x + ((level - 1) * world.level_size)
+				local coord = {
+					x = t_x + 4,
+					y = turret.y + 4 -- center the bullet 
+				}
+				add_bullet(player, coord, 2)
+			end
+		end
 	end
 end
 
