@@ -11,9 +11,9 @@ __lua__
 
 function _init()
 	-- music(3)
-	offset = 128 * 5
+	offset = 5
 	player = {
-		x = 10 + offset,
+		x = 10 + (128 * offset),
 		y = 90,
 		sprite = 64,
 		size = 1,
@@ -223,7 +223,8 @@ function _init()
 		fire_fx_xl = {8,8,2}
 	}
 	turrets = {
-		anim = 0,
+		anim = 0.5,
+		sp = 5,
 		loc = {
 			{
 				level = 6,
@@ -260,8 +261,8 @@ function _draw()
 	draw_fountains()
 	draw_turbines()
 	draw_ghosts()
-	draw_player()
 	draw_turrets()
+	draw_player()
 	draw_bullets()
 	draw_fx()
 	roll_cam()
@@ -320,25 +321,28 @@ end
 function check_dmg() -- check if on enemy tile
 	if map_collide(player, 'right', 1) 
 	or map_collide(player, 'left', 1) then
-		game_camera.offset += 1
-		sfx(14)
-		add_ghost()
-		player.sprite = 48
-		player.dx = 0
-		player.dy = 0
-		-- sfx(8)
-		death_fx(player.x, player.y, 16, particles.death_fx, 4)
-		-- return player to starting position
-		player.x = 10 + ((world.current_level - 1) * world.level_size)
-		player.y = 90
-		-- reset key and portal and turrets
-		fountains.loc[world.current_level].active = false
-		game_keys.loc[world.current_level].found = false
-		for turret in all(turrets.loc) do 
-			if turret.level == world.current_level then
-				turret.active = false
-			end
-		end
+		kill_player()
+	end
+end
+
+function kill_player()
+	game_camera.offset += 1
+	sfx(14)
+	add_ghost()
+	player.sprite = 48
+	player.dx = 0
+	player.dy = 0
+	-- sfx(8)
+	death_fx(player.x, player.y, 16, particles.death_fx, 4)
+	-- return player to starting position
+	player.x = 10 + ((world.current_level - 1) * world.level_size)
+	player.y = 90
+	-- reset key and portal and turrets
+	fountains.loc[world.current_level].active = false
+	game_keys.loc[world.current_level].found = false
+	bullets = {}
+	for turret in all(turrets.loc) do 
+			turret.active = false
 	end
 end
 
@@ -520,6 +524,15 @@ function player_animate()
 			end
 		end
 	end
+end
+
+function bullet_collide(p, b) -- player, bullet
+	if b.x > player.x
+	and b.x < player.x + player.width
+	and b.y > player.y 
+	and b.y < player.y + player.height then
+		return true
+	end	
 end
 
 function map_collide(obj, dir, flag)
@@ -798,9 +811,13 @@ function add_bullet(player, shooter, bullet_speed)
 end
 
 function update_bullets()
-	for b in all(bullets) do 
+	for b in all(bullets) do
+		dust_fx(b.x, b.y, 2, particles.fire_fx, 1) 
 		b.x += b.dx 
 		b.y += b.dy
+		if bullet_collide(player, b) then
+			kill_player()
+		end
 		if b.y < game_camera.cam_y 
 		or b.y > game_camera.cam_y + (world.level_size * world.current_row) then
 			del(bullets, b)
@@ -810,12 +827,23 @@ end
 
 function draw_bullets()
 	for b in all(bullets) do 
-		circfill(b.x, b.y, 1, 14)
+		rectfill(b.x, b.y, b.x + 2, b.y + 2, 14)
+		-- circfill(b.x, b.y, 1, 14)
 	end
 end
 
 function draw_turrets()
 	local level = world.current_level
+	for turret in all(turrets.loc) do 
+		if turret.active then 
+			turrets.sp = 7
+		else
+			turrets.sp = 5
+		end
+		if turret.level == level then
+			spr(turrets.sp, turret.x + ((level -1) * world.level_size), turret.y, 1, 1, false)
+		end
+	end
 	if time() - turrets.anim > 1.5 then 
 		turrets.anim = time() 
 		for turret in all(turrets.loc) do 
@@ -825,7 +853,7 @@ function draw_turrets()
 					x = t_x + 4,
 					y = turret.y + 4 -- center the bullet 
 				}
-				add_bullet(player, coord, 2)
+				add_bullet(player, coord, 2.5)
 			end
 		end
 	end
@@ -920,7 +948,7 @@ __map__
 0e0e0e0e0e0e0e0e0e0e2222222222221b1f0000000000000000000000001f1b0000393a0000000000000000000022220a0a22222222222222222222222222220a00003432330022220034323300000a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e2222222222221b00000000000000000000000000001b002200002200000000000000002222220a0a00222200000000002222220022220a00000000000022220000000000000a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e2222222222221b0000000000000000002b2c0000001b202202022200000000000000000022220a3c00220000343300000022000000220a00000000000022220000000000000a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0e2b130e0e0e0e142c0e2222222222221b000000000000000022393a2200000a0a0a0a0a0a20000000000000000000000a0000000000033100000000000000220a00000000000022220000010000000a000000000005000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0e2b130e0e0e0e142c0e2222222222221b000000000000000022393a2200000a0a0a0a0a0a20000000000000000000000a0000000000033100000000000000220a00000000000022220000010000000a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0e0e0e050e0e050e0e0e2222222222221b00000000000000222200002222001b00000000000a000000000000000000000a0000000064030a0a0a0a00000000000a00000033323182823332310000000a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0e0e0e0e1d1e0e0e0e0e2222222222221b00000020200000222202022222001b0000000000000a0000200000000000000a000000210a0a000000000a0a0000000a000000000000808100000a00000b0a0000000d0d0d0d0d0d0d0d0d000000000000000000000000000000000000000000000000000000000000000000000000
 0e0e0e0e2d2e0e0e0e0e2222222222221b0000000a0a0a0a0a0a0a0a0a0a0a1b000022220000006400343232330000000a000000210a0000272800000a0000010a00640000000090910000370a00000a0000000d0d0d0d0d0d0d0d0d000001000000000000000000000000000000000000000000000000000000000000000000
