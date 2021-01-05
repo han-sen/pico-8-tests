@@ -1,4 +1,5 @@
 game_keys = {
+    anim = 0,
     sp = 21,
     loc = {
         {
@@ -33,10 +34,15 @@ game_keys = {
         },
         {
             level = 6,
-            x = 40,
-            y = 32,
+            x = 112,
+            y = 56,
+            found = false
+        },
+        {
+            level = 7,
+            x = 96,
+            y = 56,
             found = false
         }
-    },
-    anim = 0
+    }
 }

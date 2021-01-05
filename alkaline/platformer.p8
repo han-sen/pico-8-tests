@@ -1,5 +1,6 @@
 pico-8 cartridge // http://www.pico-8.com
 version 29
+
 __lua__
 
 -- *** FLAG TABLE ***
@@ -9,228 +10,26 @@ __lua__
 -- 3 Keys
 -- 4 Boost tiles
 
+#include src/player.lua
+#include src/game_keys.lua
+#include src/fountains.lua
+#include src/turbines.lua
+#include src/utils.lua
+#include src/hazards.lua
+#include src/collisions.lua
+#include src/particles.lua
+#include src/bullets.lua
+#include src/update.lua
+#include src/draw.lua
+
 function _init()
-	-- music(3)
-	offset = 6
-	player = {
-		x = 10 + (128 * offset),
-		y = 90,
-		sprite = 64,
-		size = 1,
-		width = 8,
-		height = 8,
-		flipped = false,
-		dx = 0,
-		dy = 0,
-		mdx = 2,
-		mdy = 5.25,
-		acc = 0.5,
-		accy = 3.5,
-		anim = 0,
-		running = false,
-		jumping = false,
-		falling = false,
-		landed = false
-	}
-	game_keys = {
-		anim = 0,
-		sp = 21,
-		loc = {
-			{
-				level = 1,
-				x = 0,
-				y = 0,
-				found = true
-			},
-			{
-				level = 2,
-				x = 96,
-				y = 80,
-				found = false
-			},
-			{
-				level = 3,
-				x = 96,
-				y = 80,
-				found = false
-			},
-			{
-				level = 4,
-				x = 120,
-				y = 56,
-				found = false
-			},
-			{
-				level = 5,
-				x = 88,
-				y = 32,
-				found = false
-			},
-			{				
-				level = 6,
-				x = 112,
-				y = 56,
-				found = false
-			},
-			{				
-				level = 7,
-				x = 96,
-				y = 56,
-				found = false
-			}
-		},
-	}
-	fountains = {
-		anim = 0,
-		sp1 = 25,
-		sp2 = 26,
-		loc = {
-			{
-				level = 1,
-				x = 96,
-				y = 104,
-				active = true
-			},
-			{
-				level = 2,
-				x = 80,
-				y = 48,
-				active = false
-			},
-			{
-				level = 3,
-				x = 16,
-				y = 24,
-				active = false
-			},
-			{
-				level = 4,
-				x = 64,
-				y = 80,
-				active = false
-			},
-			{
-				level = 5,
-				x = 64,
-				y = 112,
-				active = false
-			},
-			{
-				level = 6,
-				x = 88,
-				y = 112,
-				active = false
-			},
-			{
-				level = 7,
-				x = 96,
-				y = 32,
-				active = false
-			}
-		}
-	}
-	flames = {
-		anim = 0,
-		loc = {
-			{
-				level = 5,
-				x = 56,
-				y = 48
-			},
-			{
-				level = 7,
-				x = 40,
-				y = 104
-			}
-		}
-	}
-	turbines = {
-		anim = 0,
-		sp_anim = 0,
-		sp = 96,
-		loc = {
-			{
-				level = 2,
-				x = 8,
-				y = 80
-			},
-			{
-				level = 3,
-				x = 32,
-				y = 104
-			},
-			{
-				level = 3,
-				x = 80,
-				y = 104
-			},
-			{
-				level = 3,
-				x = 56,
-				y = 56
-			},
-			{
-				level = 3,
-				x = 120,
-				y = 80
-			},
-			{
-				level = 4,
-				x = 8,
-				y = 72
-			},
-			{
-				level = 4,
-				x = 32,
-				y = 112
-			},
-			{
-				level = 4,
-				x = 40,
-				y = 40
-			},
-			{
-				level = 4,
-				x = 96,
-				y = 104
-			},
-			{
-				level = 5,
-				x = 16,
-				y = 56
-			},
-			{
-				level = 5,
-				x = 40,
-				y = 88
-			},
-			{
-				level = 6,
-				x = 32,
-				y = 104
-			},
-			{
-				level = 6,
-				x = 40,
-				y = 72
-			},
-			{
-				level = 7,
-				x = 16,
-				y = 64
-			},
-			{
-				level = 7,
-				x = 104,
-				y = 80
-			},
-			{
-				level = 7,
-				x = 104,
-				y = 120
-			}
-		}
-	}
+	music(3)
+	player = player
+	game_keys = game_keys
+	fountains = fountains
+	turbines = turbines
+	flames = flames
+	turrets = turrets
 	game_camera = {
 		cam_x = 0,
 		cam_y = 0,
@@ -254,63 +53,33 @@ function _init()
 		fire_fx = {8,2,0},
 		fire_fx_xl = {8,8,2}
 	}
-	turrets = {
-		anim = 0.5,
-		sp = 5,
-		loc = {
-			{
-				level = 6,
-				active = false,
-				x = 40,
-				y = 32
-			},
-			{
-				level = 6,
-				active = false,
-				x = 24,
-				y = 32
-			},
-			{
-				level = 7,
-				active = false,
-				x = 8,
-				y = 8
-			},
-			{
-				level = 7,
-				active = false,
-				x = 120,
-				y = 48
-			}
-		}
-	}
 	bullets = {}
 	ghosts = {}
 end
 
 function _update()
-	check_level()
-	check_solve()
-	check_dmg()
-	player_update()
-	update_bullets()
-	check_boost()
-	run_turbines()
-	run_flames()
-	animate_fountains()
-	player_animate()
-	game_key_animate()
-	animate_turbines()
-	update_fx()
+    check_level()
+    check_solve()
+    check_dmg()
+    player_update()
+    update_bullets()
+    check_boost()
+    run_turbines()
+    run_flames()
+    animate_fountains()
+    player_animate()
+    game_key_animate()
+    animate_turbines()
+    update_fx()
 end
 
 function _draw()
 	cls()
 	map(0, 0)
+	draw_ghosts()
 	draw_game_key()
 	draw_fountains()
 	draw_turbines()
-	draw_ghosts()
 	draw_turrets()
 	draw_player()
 	draw_bullets()
@@ -326,584 +95,6 @@ function draw_debug()
 	-- print(player.dx, 128 * (world.current_level - 1), 30)
 	-- print(#ghosts, 128 * (world.current_level - 1), 30)
 	-- print(#bullets, 128 * (world.current_level - 1), 30)
-
-end
-
--- UTILITY FUNCTIONS
-
-function check_level()
-	world.current_level = ceil(player.x / 128)
-end
-
-function check_solve() -- check if player has unlocked level
-	local level = world.current_level
-	if map_collide(player, "down", 3)
-	or map_collide(player, "right", 3)
-	or map_collide(player, "left", 3) then -- if they touch level key
-		if not game_keys.loc[level].found then -- play sound
-			local f_x = fountains.loc[level].x + ((level - 1) * 128) + 8
-			local f_y = fountains.loc[level].y
-			sfx(7)
-			water_fx(f_x, f_y, 16, particles.bubble_fx, 16)
-
-		end
-		fountains.loc[level].active = true
-		game_keys.loc[level].found = true
-		for turret in all(turrets.loc) do 
-			if turret.level == level then
-				turret.active = true
-			end
-		end
-	end
-	if map_collide(player, 'down', 2) and fountains.loc[level].active then -- if solved and jumping into portal
-		player.x = (world.current_level * world.level_size) + player.width
-		player.y = 104
-		game_camera.cam_x = world.current_level * world.level_size
-	end
-end
-
-function check_boost() -- check if on boost tile
-	if map_collide(player, 'down', 4) then
-		player.dy = -player.mdy
-	end
-end
-
-function check_dmg() -- check if on enemy tile
-	if map_collide(player, 'right', 1) 
-	or map_collide(player, 'left', 1) then
-		kill_player()
-	end
-end
-
-function kill_player()
-	game_camera.offset += 1
-	sfx(14)
-	add_ghost()
-	player.sprite = 48
-	player.dx = 0
-	player.dy = 0
-	-- sfx(8)
-	death_fx(player.x, player.y, 16, particles.death_fx, 4)
-	-- return player to starting position
-	player.x = 10 + ((world.current_level - 1) * world.level_size)
-	player.y = 90
-	-- reset key and portal and turrets
-	fountains.loc[world.current_level].active = false
-	game_keys.loc[world.current_level].found = false
-	bullets = {}
-	for turret in all(turrets.loc) do 
-			turret.active = false
-	end
-end
-
-function roll_cam()
-	if game_camera.offset == 0 then
-		camera(world.level_size * (world.current_level - 1), game_camera.cam_y)
-	else 
-		screen_shake()
-	end
-end
-
-function screen_shake()
-	local fade = 0.75
-	local offset_x = 8-rnd(16)
-	local offset_y = 8-rnd(16)
-
-	offset_x *= game_camera.offset
-	offset_y *= game_camera.offset
-	
-	camera(game_camera.cam_x, offset_y + game_camera.cam_y)
-
-	game_camera.offset *= fade
-
-	if game_camera.offset < 0.05 then
-		game_camera.offset = 0
-	end
-end
-
-function add_ghost()
-	local x = player.x
-	local y = player.y
-	local coord = { x = x, y = y }
-	add(ghosts, coord) -- add new ghost
-	-- cleanup old ghosts
-	if #ghosts > 1 then
-		del(ghosts, ghosts[1]) 
-	end
-end
-
--- DRAW FUNCTIONS
- 
-function game_key_animate()
-	if time() - game_keys.anim > 0.3 then
-		game_keys.anim = time()
-		game_keys.sp += 1
-		if game_keys.sp > 24 then
-			game_keys.sp = 21
-		end
-	end
-end
-
-function draw_game_key()
-	local level = world.current_level
-	if not game_keys.loc[level].found then
-		local g_x = game_keys.loc[level].x + ((level - 1) * 128)
-		local g_y = game_keys.loc[level].y
-		spr(game_keys.sp, g_x, g_y, 1, 1, false)
-	end
-end
-
-function draw_fountains()
-	local level = world.current_level
-	if fountains.loc[level].active then
-		local g_x = fountains.loc[level].x + ((level - 1) * 128)
-		local g_y = fountains.loc[level].y
-		spr(fountains.sp1, g_x, g_y, 1, 1, false)
-		spr(fountains.sp2, g_x + 8, g_y, 1, 1, false)
-	end
-end
-
-function draw_player()
-	spr(player.sprite,player.x,player.y, player.size, player.size, player.flipped)	
-end
-
-function draw_ghosts()
-	if #ghosts > 0 then
-		local ghost = ghosts[#ghosts] -- get most recent ghost
-		spr(48, ghost.x, ghost.y, 1, 1, false)
-	end
-end
-
--- UPDATE FUNCTIONS
-
-function player_update()
-	player.dy += world.gravity
-	player.dx *= world.friction
-	-- -- velocity cap check to add a ceiling to boosts
-	if player.dy > player.mdy then
-		player.dy = player.mdy
-	elseif player.dy < -player.mdy then
-		player.dy = -player.mdy
-	elseif player.dx > player.mdx then
-		player.dx = player.mdx
-	elseif player.dx < -player.mdx then
-		player.dx = -player.mdx
-	end
-	-- player controls
-	if btn(0) then -- left
-		player.dx -= player.acc
-		player.running = true
-		player.flipped = true
-	end
-	if btn(1) then -- right
-		player.dx += player.acc
-		player.running = true
-		player.flipped = false
-	end
-	if  btnp(2) and player.landed then -- if jump was pressed and not in the air
-		player.dy -= player.accy
-		player.landed = false
-		sfx(12)
-		dust_fx(player.x, player.y + player.height, 4, particles.dust_fx, 4)
-	end
-	if not btn(0) and not btn(1) and not btnp(2) then
-		player.running = false
-	end
-	-- check for collisions
-	-- y axis
-	if player.dy > 0 then -- falling
-		player.falling = true
-		player.landed = false
-		player.jumping = false
-		if map_collide(player, "down", 0) then 
-			player.landed = true
-			player.falling = false
-			player.dy = 0
-			player.y -= ((player.y + player.height + 1) % 8) - 1-- fallback to prevent getting stuck
-		end
-	elseif player.dy < 0 then -- jumping
-		player.jumping = true
-		if map_collide(player, "up", 0) then
-			player.dy = 0
-		end
-	end
-	-- x axis
-	if player.dx < 0 then 
-		if map_collide(player, "left", 0) then
-			player.dx = 0
-		end
-	elseif player.dx > 0 then 
-		if map_collide(player, 'right', 0) then
-			player.dx = 0
-		end
-	end
-	-- update the player position
-	player.x += player.dx 
-	player.y += player.dy 
-	-- limit player to screen edges
-	if player.x <= (world.current_level - 1) * world.level_size then
-		player.x = ((world.current_level - 1) * world.level_size) + 1
-	-- elseif (player.x + player.width) >= world.current_level * world.level_size then
-	-- 	player.x = (world.current_level * world.level_size) - player.width  
-	end
-end
-
-function player_animate()
-	if player.jumping then 
-		player.sprite = 68
-	elseif player.falling then
-		player.sprite = 69
-	elseif player.running then
-		if time() - player.anim > 0.3 then
-			player.anim = time()
-			player.sprite += 1
-			if player.sprite > 66 then
-				player.sprite = 65
-			end
-		end
-	else -- idle animation
-		if time() - player.anim > 0.6 then
-			player.anim = time()
-			player.sprite += 1
-			if player.sprite > 76 or player.sprite < 73 then
-				player.sprite = 73
-			end
-		end
-	end
-end
-
-function bullet_collide(p, b) -- player, bullet
-	if b.x > player.x
-	and b.x < player.x + player.width
-	and b.y > player.y 
-	and b.y < player.y + player.height then
-		return true
-	end	
-end
-
-function map_collide(obj, dir, flag)
-	local x1, x2, y1, y2 = 0
-	-- append invisible rectangle to character, position based on current direction
-	if dir == 'left' then
-		x1 = obj.x - 1
-		y1 = obj.y
-		x2 = obj.x
-		y2 = obj.y + obj.height - 1
-	elseif dir == 'right' then
-		x1 = obj.x + obj.width
-		y1 = obj.y 
-		x2 = obj.x + obj.width + 1
-		y2 = obj.y + obj.height - 1
-	elseif dir == 'up' then
-		x1 = obj.x + obj.width
-		y1 = obj.y - 1
-		x2 = obj.x + obj.width - 1
-		y2 = obj.y 
-	elseif dir == 'down' then
-		x1 = obj.x + 1
-		y1 = obj.y + obj.height
-		x2 = obj.x + obj.width - 1
-		y2 = obj.y + obj.height + 1
-	end
-	-- convert pixel size to tile size
-	-- check each corner of rect for collision with flagged tiles
-	if fget(mget(x1/8, y1/8),flag)
-	or fget(mget(x1/8, y2/8),flag)
-	or fget(mget(x2/8, y1/8),flag)
-	or fget(mget(x2/8, y2/8),flag) then
-		return true
-	else
-		return false
-	end
-	
-end
-
--- PARTICLE SYSTEM
-
-function add_fx(x,y,die,dx,dy,grav,grow,shrink,r,c_t)
-    local fx = {
-        x = x,
-        y = y,
-        t = 0,
-        die = die,
-        dx = dx,
-        dy = dy,
-        grav = grav,
-        grow = grow,
-        shrink = shrink,
-        r = r,
-        c = 0,
-        c_t = c_t -- color table
-    }
-    add(effects,fx)
-end
-
-function update_fx()
-    for fx in all(effects) do
-        -- set particle lifetime
-        fx.t += 1
-		if fx.t > fx.die then 
-			del(effects,fx) 
-		end
-        -- move through color array based on lifetime
-        if fx.t / fx.die < 1 / #fx.c_t then
-            fx.c = fx.c_t[1]
-        elseif fx.t / fx.die < 2 / #fx.c_t then
-            fx.c = fx.c_t[2]
-        elseif fx.t / fx.die < 3 / #fx.c_t then
-            fx.c = fx.c_t[3]
-        else
-            fx.c = fx.c_t[4]
-        end
-        -- apply physics
-        if fx.grav then fx.dy += .5 end
-        if fx.grow then fx.r += .1 end
-        if fx.shrink then fx.r -= .1 end
-        -- update 
-        fx.x += fx.dx
-        fx.y += fx.dy
-    end
-end
-
-function draw_fx()
-	for fx in all(effects) do
-        --draw pixel for size 1, draw circle for larger
-        if fx.r <= 1 then
-            pset(fx.x,fx.y,fx.c)
-        else
-            circfill(fx.x,fx.y,fx.r,fx.c)
-        end
-    end
-end
-
--- player death effect
-function death_fx(x,y,w,c_t,num)
-    for i=0, num do
-        --settings
-        add_fx(
-            x+rnd(w)-w/2,  -- x
-            y+rnd(w)-w/2,  -- y
-            30+rnd(10),-- die
-            0,         -- dx
-            -.5,       -- dy
-            false,     -- gravity
-            false,     -- grow
-            true,      -- shrink
-            3,         -- radius
-            c_t    -- color_table
-        )
-    end
-end
-
--- fountain activation
-function water_fx(x,y,w,c_t,num)
-    for i=0, num do
-        --settings
-        add_fx(
-            x+rnd(w)-w/2,  -- x
-            y+rnd(w)-w/2,  -- y
-            20+rnd(10),-- die
-            -0.25 + rnd(1)/2,         -- dx
-            0.125,       -- dy
-            false,     -- gravity
-            true,     -- grow
-            false,      -- shrink
-            1,         -- radius
-            c_t    -- color_table
-        )
-    end
-end
-
--- kick dust fx
-function dust_fx(x,y,w,c_t, num)
-	for i=0, num do
-        --settings
-        add_fx(
-            x+rnd(w)-w/2,  -- x
-            y+rnd(w)-w/2,  -- y
-            6+rnd(10),-- die
-            -0.25,         -- dx
-            -0.25,       -- dy
-            false,     -- gravity
-            false,     -- grow
-            true,      -- shrink
-            1,         -- radius
-            c_t    -- color_table
-        )
-    end
-end
-
-function wind_fx(x,y,w,c_t, num)
-	for i=0, num do
-        add_fx(
-            x+rnd(w)-w/2,
-            y+rnd(w)-w/2,
-            8+rnd(10),
-            -0.25 + rnd(0.5),        
-            -0.5,       
-            false,    
-            false,     
-            true,      
-            2,         
-            c_t  
-        )
-    end
-end
-
-function bubble_fx(x,y,w,c_t,num)
-	for i=0, num do
-        add_fx(
-            x+rnd(w)-w/2,
-            y+rnd(2),
-            40+rnd(10),
-            -0.125 + (rnd(1)/4),        
-            -0.25,       
-            false,    
-            false,     
-            true,      
-            flr(rnd(3)),         
-            c_t  
-        )
-    end
-end
-
-function fire_fx(x,y,w,c_t,num)
-	for i=0, num do
-        add_fx(
-            x+rnd(w)-w/2,
-            y+rnd(2),
-            40+rnd(10),
-            -0.125 + (rnd(1)/4),        
-            -0.5,       
-            false,    
-            true,     
-            false,      
-            flr(rnd(3)),         
-            c_t  
-        )
-    end
-end
-
-function animate_fountains()
-	if time() - fountains.anim > 0.9 then
-		fountains.anim = time()
-		for f in all(fountains.loc) do
-			if f.level == world.current_level 
-			and f.active then -- only draw active fountains
-				local x = f.x + (world.level_size * (f.level - 1)) + 8 -- emit from middle of sprite
-				local y = f.y 
-				bubble_fx(x, y, 8, particles.bubble_fx, 2)
-			end
-		end
-	end	
-end
-
-function run_turbines()
-	if time() - turbines.anim > 0.5 then
-		turbines.anim = time()
-		for t in all(turbines.loc) do
-			if t.level == world.current_level then -- only draw turbines on current level
-				local x = t.x + (world.level_size * (t.level - 1)) + 4 -- emit from middle of sprite
-				local y = t.y 
-				wind_fx(x, y, 2, particles.wind_fx, 2)
-			end
-		end
-	end
-end
-
-function run_flames()
-	if time() - flames.anim > 0.25 then
-		flames.anim = time()
-		for t in all(flames.loc) do
-			if t.level == world.current_level then -- only draw turbines on current level
-				local x = t.x + (world.level_size * (t.level - 1)) + 8 -- emit from middle of sprite
-				local y = t.y + 8
-				fire_fx(x, y, 8, particles.fire_fx, 4)
-			end
-		end
-	end
-end
-
-function animate_turbines()
-	if time() - turbines.sp_anim > 0.125 then
-		turbines.sp_anim = time()
-		turbines.sp += 1
-		if turbines.sp > 99 then
-			turbines.sp = 96
-		end
-	end	
-end
-
-function draw_turbines() 
-	for t in all(turbines.loc) do
-		if t.level == world.current_level then -- only draw turbines on current level
-			spr(turbines.sp, t.x + (world.level_size * (t.level - 1)), t.y, 1, 1, false)
-		end
-	end
-end
-
-function add_bullet(player, shooter, bullet_speed)
-	angle = atan2(player.x - shooter.x, player.y - shooter.y)
-	b_vx = cos(angle) * bullet_speed
-	b_vy = sin(angle) * bullet_speed
-	local bullet = {
-		x = shooter.x,
-		y = shooter.y,
-		dx = b_vx,
-		dy = b_vy,
-		level = world.current_level
-	}
-	add(bullets, bullet)
-end
-
-function update_bullets()
-	for b in all(bullets) do
-		dust_fx(b.x, b.y, 2, particles.fire_fx, 1) 
-		b.x += b.dx 
-		b.y += b.dy
-		if bullet_collide(player, b) then
-			kill_player()
-		end
-		if b.y < game_camera.cam_y 
-		or b.y > game_camera.cam_y + (world.level_size * world.current_row) then
-			del(bullets, b)
-		end
-	end
-end
-
-function draw_bullets()
-	for b in all(bullets) do 
-		rectfill(b.x, b.y, b.x + 2, b.y + 2, 14)
-		-- circfill(b.x, b.y, 1, 14)
-	end
-end
-
-function draw_turrets()
-	local level = world.current_level
-	for turret in all(turrets.loc) do 
-		if turret.active then 
-			turrets.sp = 7
-		else
-			turrets.sp = 5
-		end
-		if turret.level == level then
-			spr(turrets.sp, turret.x + ((level -1) * world.level_size), turret.y, 1, 1, false)
-		end
-	end
-	if time() - turrets.anim > 1.5 then 
-		turrets.anim = time() 
-		for turret in all(turrets.loc) do 
-			if turret.level == level and turret.active then
-				local t_x = turret.x + ((level - 1) * world.level_size)
-				local coord = {
-					x = t_x + 4,
-					y = turret.y + 4 -- center the bullet 
-				}
-				add_bullet(player, coord, 3)
-				sfx(15)
-			end
-		end
-	end
 end
 
 __gfx__
@@ -989,21 +180,21 @@ d0ddddd0766666607666666076666160616666601101111001100111001001011100011000111100
 00000555555000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __gff__
 0008040000000000000001010000000100010100000808080800000100000000020200000000000000000000000000000001010101000000000000000200000100000000000000000000000000000000000000000000000000000000000000001000000010000000000000000000000000000000000000000000000000000000
-0202020000000000000000000000000002020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000020000000000000000000000000002020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0e0e0e0e0e0e0e0e0e0e2222222222220a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1b000013140000000000000000000000000a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a3c3c3c3c3c3c3c3c3c3c3c3c3c3c0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a00000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e2222222222221b1f0000000000000000000000001f1b0000393a0000000000000000000022220a0a22222222222222222222222222220a00003432330022220034323300000a000000000000000000000000000000000a05000000000000000000000000000a00000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e2222222222221b00000000000000000000000000001b002200002200000000000000002222220a0a00222200000000002222220022220a00000000000022220000000000000a000000000000000000000000000000000a3e000000222200000000000000000a00000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e2222222222221b0000000000000000002b2c0000001b202202022200000000000000000022220a3c00220000343300000022000000220a00000000000022220000000000000a000000000000000000000000000000000a00000022222222000000000000000a00000000000000000000000000000000
 0e2b130e0e0e0e142c0e2222222222221b000000000000000022393a2200000a0a0a0a0a0a20000000000000000000000a0000000000033100000000000000220a00000000000022220000010000000a000000000000000000000000000000000a00000000222200000000000202000a00000000000000000000000000000000
-0e0e0e050e0e050e0e0e2222222222221b00000000000000222200002222001b00000000000a000000000000000000000a0000000064030a0a0a0a00000000000a00000033323182823332310000000a000000000000000000000000000000000a000000000000000000000a0a0a0a0a00000000000000000000000000000000
-0e0e0e0e1d1e0e0e0e0e2222222222221b00000020200000222202022222001b0000000000000a0000200000000000000a000000210a0a000000000a0a0000000a000000000000808100000a00000b0a0000000d0d0d0d0d0d0d0d0d000000000a00000000000000120012000000000a00000000000000000000000000000000
+0e0e0e050e0e050e0e0e2222222222221b00000000000000222200002222001b00000000000a000000000000000000000a0000000064030a0a0a0a00000000000a00000033323122223332310000000a000000000000000000000000000000000a000000000000000000000f0f0f0f0a00000000000000000000000000000000
+0e0e0e0e1d1e0e0e0e0e2222222222221b00000020200000222202022222001b0000000000000a0000200000000000000a000000210a0a000000000a0a0000000a000000000000808100000a00000b0a0000000d0d0d0d0d0d0d0d0f000000000a00000000000000120012000000000a00000000000000000000000000000000
 0e0e0e0e2d2e0e0e0e0e2222222222221b0000000a0a0a0a0a0a0a0a0a0a0a1b000022220000006400343232330000000a000000210a0000272800000a0000010a00640000000090910000370a00000a0000000d0d0d0d0d0d0f0d0d000001000a00000000000000000000000100000a00000000000000000000000000000000
-0e0e0e0e0e0e0e0e0e0e2222222222221b00000000000000000000000000001b002222222200000300000000000000000a000000000a002937382a000a0000030a000c00000000000000000a380a000a0000000d0d0d0d0d0d121212121212120a00640000000000000000000a00000a00000000000000000000000000000000
-0e0e25260e0e25260e0e2222222222221b00000000000000000000000000001b000022220000000300000000000000000a640000000a00221f1f22000a0000030a000000000000000000001c001c000a0000000d0d640d0d0d0d0d0d000000000a00000000000000000000000a00000a00000000000000000000000000000000
-0e0e35360e0e35360e0e220e292a0e220a640a0a0a0a0a0a000000000100201b000000000000000300000000010000640a0a0000000a002202022200000000030a000000000000000000001c001c000a0000000d0d3f0d0d0d0d0d0d000000000a0a0a0a0a0000000a0a00000a64000a00000000000000000000000000000000
-0e0e0e0e0e0e0e0e0e0e220e393a0e2200000000000000000a0000000a0a0a0a0000000000003432330000000034330a0a000000000a003432323300000000030a000000006400000000001c001c000a0000000d0d3f0d0d0d0d0d0d000000000a0000000000000000000a200a00000a00000000000000000000000000000000
-0e0e0e0e0e0e0e0e0e0e220e00000e22000000000000000000000034330a0a0a000000000000000300000000000000030a000000000a000000000000000000030a000000000c00000000001c001c000a0000000d0d3f3f0d0d0d0d0d0d0d00000a000000000000000000000a0a00000a00000000000000000000000000000000
+0e0e0e0e0e0e0e0e0e0e2222222222221b00000000000000000000000000001b002222222200000300000000000000000a000000000a002937382a000a0000030a000c00000000000000000a380a000a0000000d0d0d0d0d0d121212121212120a00640000000000000000000f00000a00000000000000000000000000000000
+0e0e25260e0e25260e0e2222222222221b00000000000000000000000000001b000022220000000300000000000000000a640000000a00221f1f22000a0000030a000000000000000000001c001c000a0000000d0d640d0d0d0d0d0d000000000a00000000000000000000000f00000a00000000000000000000000000000000
+0e0e35360e0e35360e0e220e292a0e220a640a0a0a0a0a0a000000000100201b000000000000000300000000010000640a0a0000000a002202022200000000030a000000000000000000001c001c000a0000000d0d3f0d0d0d0d0d0d000000000a0f0f0f0f0000000f0f00000f64000a00000000000000000000000000000000
+0e0e0e0e0e0e0e0e0e0e220e393a0e2200000000000000000a0000000a0a0a0a0000000000003432330000000034330a0a000000000a003432323300000000030a000000006400000000001c001c000a0000000d0d3f0d0d0d0d0d0d000000000a0000000000000000000f200f00000a00000000000000000000000000000000
+0e0e0e0e0e0e0e0e0e0e220e00000e22000000000000000000000034330a0a0a000000000000000300000000000000030a000000000a000000000000000000030a000000000c00000000001c001c000a0000000d0d3f3f0d0d0d0d0d0d0d00000a000000000000000000000f0f00000a00000000000000000000000000000000
 0e0e0e0e0e0e0e0e0e0e220e02020e22000000000000000000003432310a0a0a000000006400000300006400000000030a000000000a202020202020640000030a000000330000850000851c001c000a0000000d643f383f0d0d0d00000d00000a0000000a80810a000000000000000a00000000000000000000000000000000
 111211121112111211121112111211120a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a000c00000300000c00000000030a000000640a0a0a0a0a0a0a0a0a0a0a0a000034310000860202861c001c200a0000000d3f3f383f200d0d02020d00000a00000f3f90913f0f0000000000000a00000000000000000000000000000000
 0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a202020202020202020202020200a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a11111111111111111111111111110a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0b12123412121212331212121264120b00000000000000000000000000000000
@@ -1029,5 +220,5 @@ __music__
 03 41024344
 02 01020344
 03 494a000a
-03 06000f0d
+03 06010f0d
 
