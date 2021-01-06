@@ -28,6 +28,7 @@ function check_solve() -- check if player has unlocked level
 		player.x = (world.current_level * world.level_size) + player.width
 		player.y = 104
 		game_camera.cam_x = world.current_level * world.level_size
+		bullets = {}
 	end
 end
 

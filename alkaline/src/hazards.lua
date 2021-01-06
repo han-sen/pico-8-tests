@@ -41,6 +41,11 @@ turrets = {
             active = false,
             x = 120,
             y = 48
+        },
+        {
+            level = 8,
+            x = 60,
+            y = 0
         }
     }
 }
