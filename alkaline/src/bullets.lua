@@ -21,6 +21,10 @@ function update_bullets()
 		if bullet_collide(player, b) then
 			kill_player()
 		end
+		if fget(mget((b.x + 1) / 8, (b.y + 1) / 8), 5) then -- if bullet hits blocker cube
+			del(bullets, b)
+			death_fx(b.x, b.y, 3, particles.death_fx, 3)
+		end
 		if b.y < game_camera.cam_y 
 		or b.y > game_camera.cam_y + (world.level_size * world.current_row) then
 			del(bullets, b)

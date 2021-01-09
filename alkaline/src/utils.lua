@@ -55,8 +55,8 @@ function kill_player()
 	-- sfx(8)
 	death_fx(player.x, player.y, 16, particles.death_fx, 4)
 	-- return player to starting position
-	player.x = 10 + ((world.current_level - 1) * world.level_size)
-	player.y = 90
+	player.x = 8 + ((world.current_level - 1) * world.level_size)
+	player.y = 104
 	-- reset key and portal and turrets
 	fountains.loc[world.current_level].active = false
 	game_keys.loc[world.current_level].found = false
