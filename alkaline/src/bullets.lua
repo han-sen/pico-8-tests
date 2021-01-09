@@ -15,7 +15,7 @@ end
 
 function update_bullets()
 	for b in all(bullets) do
-		dust_fx(b.x, b.y, 2, particles.fire_fx, 1) 
+		dust_fx(b.x, b.y, 1, particles.fire_fx, 1) 
 		b.x += b.dx 
 		b.y += b.dy
 		if bullet_collide(player, b) then

@@ -1,7 +1,12 @@
 -- Collision functions
 
 function bullet_collide(p, b) -- player, bullet
-    if b.x > player.x and b.x < player.x + player.width and b.y > player.y and b.y < player.y + player.height then
+    if
+        (b.x > player.x and b.x < player.x + player.width and b.y > player.y and b.y < player.y + player.height) or
+            (b.x + 1 > player.x and b.x + 1 < player.x + player.width and b.y + 1 > player.y and
+                b.y + 1 < player.y + player.height)
+     then
+        turrets.anim = 0
         return true
     end
 end

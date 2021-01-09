@@ -1,6 +1,5 @@
 player = {
-    offset = 0,
-    x = 10 + (128 * 7),
+    x = 10 + (128 * 5),
     y = 90,
     sprite = 64,
     size = 1,

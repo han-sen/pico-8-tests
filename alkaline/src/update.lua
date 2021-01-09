@@ -64,8 +64,8 @@ function player_update()
 		player.flipped = false
 	end
 	if  btnp(2) and player.landed then -- if jump was pressed and not in the air
-		player.dy -= player.accy
 		player.landed = false
+		player.dy -= player.accy
 		sfx(12)
 		dust_fx(player.x, player.y + player.height, 4, particles.dust_fx, 4)
 	end
@@ -89,6 +89,7 @@ function player_update()
 		end
 	elseif player.dy < 0 then -- jumping
 		player.jumping = true
+		player.landed = false
 		if map_collide(player, "up", 0) then
 			player.dy = 0
 		end
