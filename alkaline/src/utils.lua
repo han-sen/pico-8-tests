@@ -1,7 +1,22 @@
 -- UTILITY FUNCTIONS
 
 function check_level()
-	world.current_level = ceil(player.x / 128)
+	if player.y < 0 then 
+		world.current_row = 1 
+	elseif player.y > 128 then
+		world.current_row = 2
+	else
+		world.current_row = ceil(player.y / 128)
+	end
+	if player.y < 128 then 
+		world.current_level = ceil(player.x / 128)
+		game_camera.cam_x = (world.current_level - 1) * 128
+		game_camera.cam_y = 128 * (world.current_row - 1)
+	else
+		world.current_level = ceil(player.x / 128) + 8
+		game_camera.cam_x = (world.current_level - 9) * 128
+		game_camera.cam_y = 128
+	end
 end
 
 function check_solve() -- check if player has unlocked level
@@ -14,7 +29,6 @@ function check_solve() -- check if player has unlocked level
 			local f_y = fountains.loc[level].y
 			sfx(7)
 			water_fx(f_x, f_y, 16, particles.bubble_fx, 16)
-
 		end
 		fountains.loc[level].active = true
 		game_keys.loc[level].found = true
@@ -25,9 +39,22 @@ function check_solve() -- check if player has unlocked level
 		end
 	end
 	if map_collide(player, 'down', 2) and fountains.loc[level].active then -- if solved and jumping into portal
-		player.x = (world.current_level * world.level_size) + player.width
-		player.y = 104
-		game_camera.cam_x = world.current_level * world.level_size
+		if level == 8 then
+			player.x = 8
+			player.y = 128 + 104
+			-- game_camera.cam_x = 0
+			-- game_camera.cam_y = 128
+		elseif level > 8 then
+			player.x = ((level - 9) * 128) + player.width
+			player.y = 104 + 128
+		else
+			player.x = (level * 128) + player.width + 1
+			player.y = 104
+			-- game_camera.cam_x = (level - 1) * 128
+			-- game_camera.cam_y = 0
+		end
+		game_camera.cam_x = flr(player.x/128)
+		game_camera.cam_x = flr(player.y/128)
 		bullets = {}
 	end
 end
@@ -68,7 +95,7 @@ end
 
 function roll_cam()
 	if game_camera.offset == 0 then
-		camera(world.level_size * (world.current_level - 1), game_camera.cam_y)
+		camera(game_camera.cam_x, game_camera.cam_y)
 	else 
 		screen_shake()
 	end

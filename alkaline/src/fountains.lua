@@ -50,6 +50,18 @@ fountains = {
             x = 16,
             y = 16,
             active = false
+        },
+        {
+            level = 9,
+            x = 112,
+            y = 112,
+            active = false
+        },
+        {
+            level = 10,
+            x = 112,
+            y = 112,
+            active = false
         }
     }
 }

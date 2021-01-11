@@ -12,20 +12,24 @@ end
 
 function draw_game_key()
 	local level = world.current_level
-	if not game_keys.loc[level].found then
-		local g_x = game_keys.loc[level].x + ((level - 1) * 128)
-		local g_y = game_keys.loc[level].y
-		spr(game_keys.sp, g_x, g_y, 1, 1, false)
+	if game_keys.loc[level] then
+		if not game_keys.loc[level].found then
+			local g_x = game_keys.loc[level].x + ((level - 1) * 128)
+			local g_y = game_keys.loc[level].y
+			spr(game_keys.sp, g_x, g_y, 1, 1, false)
+		end
 	end
 end
 
 function draw_fountains()
 	local level = world.current_level
-	if fountains.loc[level].active then
-		local g_x = fountains.loc[level].x + ((level - 1) * 128)
-		local g_y = fountains.loc[level].y
-		spr(fountains.sp1, g_x, g_y, 1, 1, false)
-		spr(fountains.sp2, g_x + 8, g_y, 1, 1, false)
+	if fountains.loc[level] then
+		if fountains.loc[level].active then
+			local g_x = fountains.loc[level].x + ((level - 1) * 128)
+			local g_y = fountains.loc[level].y
+			spr(fountains.sp1, g_x, g_y, 1, 1, false)
+			spr(fountains.sp2, g_x + 8, g_y, 1, 1, false)
+		end
 	end
 end
 

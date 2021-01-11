@@ -24,21 +24,6 @@ function player_animate()
 	end
 end
 
-function animate_fountains()
-	if time() - fountains.anim > 0.9 then
-		fountains.anim = time()
-		for f in all(fountains.loc) do
-			if f.level == world.current_level 
-			and f.active then -- only draw active fountains
-				local x = f.x + (world.level_size * (f.level - 1)) + 8 -- emit from middle of sprite
-				local y = f.y 
-				bubble_fx(x, y, 8, particles.bubble_fx, 2)
-			end
-		end
-	end	
-end
-
-
 function player_update()
 	player.dy += world.gravity
 	player.dx *= world.friction
@@ -108,11 +93,11 @@ function player_update()
 	player.x += player.dx 
 	player.y += player.dy 
 	-- limit player to screen edges
-	if player.x <= (world.current_level - 1) * world.level_size then
-		player.x = ((world.current_level - 1) * world.level_size) + 1
-	-- elseif (player.x + player.width) >= world.current_level * world.level_size then
+	-- if player.x <= (world.current_level - 1) * world.level_size then
+	-- 	player.x = ((world.current_level - 1) * world.level_size) + 1
+	-- elseif (player.x + player.width) >= (8 * world.level_size) then
 	-- 	player.x = (world.current_level * world.level_size) - player.width  
-	end
+	-- end
 end
 
 function run_turbines()
@@ -147,6 +132,20 @@ function animate_turbines()
 		turbines.sp += 1
 		if turbines.sp > 99 then
 			turbines.sp = 96
+		end
+	end	
+end
+
+function animate_fountains()
+	if time() - fountains.anim > 0.9 then
+		fountains.anim = time()
+		for f in all(fountains.loc) do
+			if f.level == world.current_level 
+			and f.active then -- only draw active fountains
+				local x = f.x + (world.level_size * (f.level - 1)) + 8 -- emit from middle of sprite
+				local y = f.y 
+				bubble_fx(x, y, 8, particles.bubble_fx, 2)
+			end
 		end
 	end	
 end
