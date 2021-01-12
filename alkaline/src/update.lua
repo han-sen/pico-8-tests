@@ -92,12 +92,10 @@ function player_update()
 	-- update the player position
 	player.x += player.dx 
 	player.y += player.dy 
-	-- limit player to screen edges
-	-- if player.x <= (world.current_level - 1) * world.level_size then
-	-- 	player.x = ((world.current_level - 1) * world.level_size) + 1
-	-- elseif (player.x + player.width) >= (8 * world.level_size) then
-	-- 	player.x = (world.current_level * world.level_size) - player.width  
-	-- end
+	-- limit player to map edges
+	if player.x >= 1024 - player.width then
+		player.x = 1024 - player.width - 1
+	end
 end
 
 function run_turbines()

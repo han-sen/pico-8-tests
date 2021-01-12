@@ -1,6 +1,7 @@
 -- UTILITY FUNCTIONS
 
 function check_level()
+
 	if player.y < 0 then 
 		world.current_row = 1 
 	elseif player.y > 128 then
@@ -21,6 +22,7 @@ end
 
 function check_solve() -- check if player has unlocked level
 	local level = world.current_level
+	local row = world.current_row
 	if map_collide(player, "down", 3)
 	or map_collide(player, "right", 3)
 	or map_collide(player, "left", 3) then -- if they touch level key
@@ -39,20 +41,19 @@ function check_solve() -- check if player has unlocked level
 		end
 	end
 	if map_collide(player, 'down', 2) and fountains.loc[level].active then -- if solved and jumping into portal
-		if level == 8 then
-			player.x = 8
-			player.y = 128 + 104
-			-- game_camera.cam_x = 0
-			-- game_camera.cam_y = 128
-		elseif level > 8 then
-			player.x = ((level - 9) * 128) + player.width
-			player.y = 104 + 128
+		-- stop momentum
+		player.dx = 0
+		player.dy = 0
+		local n_l, n_r
+		if level == 8 then 
+			n_l = 9
+			n_r = 2
 		else
-			player.x = (level * 128) + player.width + 1
-			player.y = 104
-			-- game_camera.cam_x = (level - 1) * 128
-			-- game_camera.cam_y = 0
+			n_l = level
+			n_r = row
 		end
+		player.x = ((n_l % 9) * 128) + player.width
+		player.y = ((ceil(n_l / 9) - 1) * 128) + (128 * (n_r - 1)) + 104 -- spawn two tiles up from botton
 		game_camera.cam_x = flr(player.x/128)
 		game_camera.cam_x = flr(player.y/128)
 		bullets = {}
