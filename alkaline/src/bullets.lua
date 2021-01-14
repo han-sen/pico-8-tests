@@ -47,18 +47,33 @@ function draw_turrets()
 		else
 			turrets.sp = 5
 		end
+		local t_x, t_y
+		if level == 9 then
+			t_x = turret.x
+			t_y = turret.y + 128
+		else
+			t_x = turret.x + (((level % 9) - 1) * 128)
+			t_y = turret.y + ((ceil(level / 9) - 1) * 128)
+		end
 		if turret.level == level then
-			spr(turrets.sp, turret.x + ((level -1) * world.level_size), turret.y, 1, 1, false)
+			spr(turrets.sp, t_x, t_y, 1, 1, false)
 		end
 	end
 	if time() - turrets.anim > 1.5 then 
 		turrets.anim = time() 
 		for turret in all(turrets.loc) do 
 			if turret.level == level and turret.active then
-				local t_x = turret.x + ((level - 1) * world.level_size)
+				local f_x, f_y
+				if level == 9 then
+					f_x = turret.x
+					f_y = turret.y + 128
+				else
+					f_x = turret.x + (((level % 9) - 1) * 128)
+					f_y = turret.y + ((ceil(level / 9) - 1) * 128)
+				end
 				local coord = {
-					x = t_x + 4,
-					y = turret.y + 4 -- center the bullet 
+					x = f_x + 4,
+					y = f_y + 4 -- center the bullet 
 				}
 				add_bullet(player, coord, 3)
 				sfx(15)

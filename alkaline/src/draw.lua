@@ -12,24 +12,35 @@ end
 
 function draw_game_key()
 	local level = world.current_level
+	local k_x, k_y
+	if level == 9 then
+		k_x = game_keys.loc[level].x
+		k_y = game_keys.loc[level].y + 128
+	else
+		k_x = game_keys.loc[level].x + (((level % 9) - 1) * 128)
+		k_y = game_keys.loc[level].y + ((ceil(level / 9) - 1) * 128)
+	end
 	if game_keys.loc[level] then
 		if not game_keys.loc[level].found then
-			
-			local g_x = game_keys.loc[level].x + (((level % 9) - 1) * 128)
-			local g_y = game_keys.loc[level].y + ((ceil(level / 9) - 1) * 128)
-			spr(game_keys.sp, g_x, g_y, 1, 1, false)
+			spr(game_keys.sp, k_x, k_y, 1, 1, false)
 		end
 	end
 end
 
 function draw_fountains()
 	local level = world.current_level
+	local f_x, f_y
+	if level == 9 then
+		f_x = fountains.loc[level].x
+		f_y = fountains.loc[level].y + 128
+	else
+		f_x = fountains.loc[level].x + (((level % 9) - 1) * 128)
+		f_y = fountains.loc[level].y + ((ceil(level / 9) - 1) * 128)
+	end
 	if fountains.loc[level] then
 		if fountains.loc[level].active then
-			local g_x = fountains.loc[level].x + (((level % 9) - 1) * 128)
-			local g_y = fountains.loc[level].y + ((ceil(level / 9) - 1) * 128)
-			spr(fountains.sp1, g_x, g_y, 1, 1, false)
-			spr(fountains.sp2, g_x + 8, g_y, 1, 1, false)
+			spr(fountains.sp1, f_x, f_y, 1, 1, false)
+			spr(fountains.sp2, f_x + 8, f_y, 1, 1, false)
 		end
 	end
 end
@@ -49,7 +60,15 @@ function draw_turbines()
 	local level = world.current_level
 	for t in all(turbines.loc) do
 		if t.level == level then -- only draw turbines on current level
-			spr(turbines.sp, t.x + (((level % 9) - 1) * 128), t.y + ((ceil(level / 9) - 1) * 128), 1, 1, false)
+			local f_x, f_y
+			if level == 9 then
+				f_x = t.x
+				f_y = t.y + 128
+			else
+				f_x = t.x + (((level % 9) - 1) * 128)
+				f_y = t.y + ((ceil(level / 9) - 1) * 128)
+			end
+			spr(turbines.sp,f_x, f_y, 1, 1, false)
 		end
 	end
 end

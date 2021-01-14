@@ -89,6 +89,7 @@ function kill_player()
 	fountains.loc[world.current_level].active = false
 	game_keys.loc[world.current_level].found = false
 	bullets = {}
+	turrets.anim = 0
 	for turret in all(turrets.loc) do 
 			turret.active = false
 	end

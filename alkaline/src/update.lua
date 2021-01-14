@@ -99,12 +99,21 @@ function player_update()
 end
 
 function run_turbines()
+	local level = world.current_level
 	if time() - turbines.anim > 0.5 then
 		turbines.anim = time()
 		for t in all(turbines.loc) do
-			if t.level == world.current_level then -- only draw turbines on current level
-				local x = t.x + (world.level_size * (t.level - 1)) + 4 -- emit from middle of sprite
-				local y = t.y 
+			if t.level == level then -- only draw turbines on current level
+				local f_x, f_y
+				if level == 9 then
+					f_x = t.x
+					f_y = t.y + 128
+				else
+					f_x = t.x + (((level % 9) - 1) * 128)
+					f_y = t.y + ((ceil(level / 9) - 1) * 128)
+				end
+				local x = f_x + 4 -- emit from middle of sprite
+				local y = f_y
 				wind_fx(x, y, 2, particles.wind_fx, 2)
 			end
 		end
