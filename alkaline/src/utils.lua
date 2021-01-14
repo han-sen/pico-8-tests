@@ -1,19 +1,13 @@
 -- UTILITY FUNCTIONS
 
 function check_level()
-
-	if player.y < 0 then 
-		world.current_row = 1 
-	elseif player.y > 128 then
-		world.current_row = 2
-	else
-		world.current_row = ceil(player.y / 128)
-	end
 	if player.y < 128 then 
+		world.current_row = 1
 		world.current_level = ceil(player.x / 128)
 		game_camera.cam_x = (world.current_level - 1) * 128
 		game_camera.cam_y = 128 * (world.current_row - 1)
 	else
+		world.current_row = 2
 		world.current_level = ceil(player.x / 128) + 8
 		game_camera.cam_x = (world.current_level - 9) * 128
 		game_camera.cam_y = 128
@@ -48,12 +42,15 @@ function check_solve() -- check if player has unlocked level
 		if level == 8 then 
 			n_l = 9
 			n_r = 2
+		elseif level == 9 then
+			n_l = 10
+			n_r = 2
 		else
 			n_l = level
 			n_r = row
 		end
 		player.x = ((n_l % 9) * 128) + player.width
-		player.y = ((ceil(n_l / 9) - 1) * 128) + (128 * (n_r - 1)) + 104 -- spawn two tiles up from botton
+		player.y = (128 * (n_r - 1)) + 104 -- spawn two tiles up from botton
 		game_camera.cam_x = flr(player.x/128)
 		game_camera.cam_x = flr(player.y/128)
 		bullets = {}
@@ -83,8 +80,8 @@ function kill_player()
 	-- sfx(8)
 	death_fx(player.x, player.y, 16, particles.death_fx, 4)
 	-- return player to starting position
-	player.x = 8 + ((world.current_level % 9) * 128) + player.width
-	player.y = ((ceil(world.current_level  / 9) - 1) * 128) + (128 * (world.current_row - 1)) + 104 
+	player.x = 8 + (128 * flr(player.x/128))
+	player.y = 104 + (128 * (world.current_row - 1))
 	-- reset key and portal and turrets
 	fountains.loc[world.current_level].active = false
 	game_keys.loc[world.current_level].found = false

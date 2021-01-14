@@ -1,6 +1,6 @@
 player = {
     x = 8 + (128 * 0),
-    y = 96 + 128,
+    y = 104 + 0,
     sprite = 64,
     size = 1,
     width = 8,
