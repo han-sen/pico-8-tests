@@ -16,6 +16,9 @@ function draw_game_key()
 	if level == 9 then
 		k_x = game_keys.loc[level].x
 		k_y = game_keys.loc[level].y + 128
+	elseif level == 10 then
+		k_x = game_keys.loc[level].x + 128
+		k_y = game_keys.loc[level].y  + 128
 	else
 		k_x = game_keys.loc[level].x + (((level % 9) - 1) * 128)
 		k_y = game_keys.loc[level].y + ((ceil(level / 9) - 1) * 128)
@@ -33,6 +36,9 @@ function draw_fountains()
 	if level == 9 then
 		f_x = fountains.loc[level].x
 		f_y = fountains.loc[level].y + 128
+	elseif level == 10 then
+		f_x = fountains.loc[level].x + 128
+		f_y = fountains.loc[level].y  + 128
 	else
 		f_x = fountains.loc[level].x + (((level % 9) - 1) * 128)
 		f_y = fountains.loc[level].y + ((ceil(level / 9) - 1) * 128)
@@ -63,6 +69,9 @@ function draw_turbines()
 			local f_x, f_y
 			if level == 9 then
 				f_x = t.x
+				f_y = t.y + 128
+			elseif level == 10 then
+				f_x = t.x + 128
 				f_y = t.y + 128
 			else
 				f_x = t.x + (((level % 9) - 1) * 128)

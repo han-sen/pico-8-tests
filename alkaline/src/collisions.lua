@@ -14,6 +14,7 @@ end
 function map_collide(obj, dir, flag)
     local x1, x2, y1, y2 = 0
     -- append invisible rectangle to character, position based on current direction
+    -- this simulates checking the 'next frame' of players movement
     if dir == "left" then
         x1 = obj.x - 1
         y1 = obj.y

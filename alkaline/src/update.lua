@@ -108,6 +108,9 @@ function run_turbines()
 				if level == 9 then
 					f_x = t.x
 					f_y = t.y + 128
+				elseif level == 10 then
+					f_x = t.x + 128
+					f_y = t.y + 128
 				else
 					f_x = t.x + (((level % 9) - 1) * 128)
 					f_y = t.y + ((ceil(level / 9) - 1) * 128)
@@ -121,13 +124,25 @@ function run_turbines()
 end
 
 function run_flames()
+	local level = world.current_level
 	if time() - flames.anim > 0.25 then
 		flames.anim = time()
 		for t in all(flames.loc) do
-			if t.level == world.current_level then -- only draw turbines on current level
-				local x = t.x + (world.level_size * (t.level - 1)) + 8 -- emit from middle of sprite
-				local y = t.y + 8
-				fire_fx(x, y, 8, particles.fire_fx, 4)
+			if t.level == level then -- only draw turbines on current level
+				local f_x, f_y
+				if level == 9 then
+					f_x = t.x
+					f_y = t.y + 128
+				elseif level == 10 then
+					f_x = t.x + 128
+					f_y = t.y + 128
+				else
+					f_x = t.x + (((level % 9) - 1) * 128)
+					f_y = t.y + ((ceil(level / 9) - 1) * 128)
+				end
+				local p_x = f_x + 8 -- emit from middle of sprite
+				local p_y = f_y + 8
+				fire_fx(p_x, p_y, 8, particles.fire_fx, 4)
 			end
 		end
 	end
@@ -149,8 +164,14 @@ function animate_fountains()
 		for f in all(fountains.loc) do
 			if f.level == world.current_level 
 			and f.active then -- only draw active fountains
-				local x = f.x + (world.level_size * (f.level - 1)) + 8 -- emit from middle of sprite
-				local y = f.y 
+				local x, y
+				if world.current_level == 10 then
+					x = f.x + 128 + 8
+					y = f.y + 128
+				else
+					x = f.x + (world.level_size * (f.level - 1)) + 8 -- emit from middle of sprite
+					y = f.y 
+				end
 				bubble_fx(x, y, 8, particles.bubble_fx, 2)
 			end
 		end

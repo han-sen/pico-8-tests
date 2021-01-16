@@ -21,8 +21,17 @@ function check_solve() -- check if player has unlocked level
 	or map_collide(player, "right", 3)
 	or map_collide(player, "left", 3) then -- if they touch level key
 		if not game_keys.loc[level].found then -- play sound
-			local f_x = fountains.loc[level].x + ((level - 1) * 128) + 8
-			local f_y = fountains.loc[level].y
+			local f_x, f_y
+			if level == 9 then
+				f_x = fountains.loc[level].x + 8
+				f_y = fountains.loc[level].y + 128
+			elseif level == 10 then
+				f_x = fountains.loc[level].x + 128 + 8
+				f_y = fountains.loc[level].y + 128
+			else
+				f_x = fountains.loc[level].x + ((level - 1) * 128) + 8
+				f_y = fountains.loc[level].y
+			end
 			sfx(7)
 			water_fx(f_x, f_y, 16, particles.bubble_fx, 16)
 		end

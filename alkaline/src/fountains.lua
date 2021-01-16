@@ -59,8 +59,8 @@ fountains = {
         },
         {
             level = 10,
-            x = 72,
-            y = 16,
+            x = 88,
+            y = 104,
             active = false
         }
     }
