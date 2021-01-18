@@ -22,11 +22,8 @@ function check_solve() -- check if player has unlocked level
 	or map_collide(player, "left", 3) then -- if they touch level key
 		if not game_keys.loc[level].found then -- play sound
 			local f_x, f_y
-			if level == 9 then
-				f_x = fountains.loc[level].x + 8
-				f_y = fountains.loc[level].y + 128
-			elseif level == 10 then
-				f_x = fountains.loc[level].x + 128 + 8
+			if level >= 9 then
+				f_x = fountains.loc[level].x + 8 + (( level % 9) * 128)
 				f_y = fountains.loc[level].y + 128
 			else
 				f_x = fountains.loc[level].x + ((level - 1) * 128) + 8
@@ -48,11 +45,8 @@ function check_solve() -- check if player has unlocked level
 		player.dx = 0
 		player.dy = 0
 		local n_l, n_r
-		if level == 8 then 
-			n_l = 9
-			n_r = 2
-		elseif level == 9 then
-			n_l = 10
+		if level >= 8 then 
+			n_l = level + 1
 			n_r = 2
 		else
 			n_l = level
@@ -69,6 +63,7 @@ end
 function check_boost() -- check if on boost tile
 	if map_collide(player, 'down', 4) then
 		player.dy = -player.mdy
+		sfx(17)
 	end
 end
 

@@ -67,11 +67,8 @@ function draw_turbines()
 	for t in all(turbines.loc) do
 		if t.level == level then -- only draw turbines on current level
 			local f_x, f_y
-			if level == 9 then
-				f_x = t.x
-				f_y = t.y + 128
-			elseif level == 10 then
-				f_x = t.x + 128
+			if level >= 9 then
+				f_x = t.x + (( level % 9) * 128)
 				f_y = t.y + 128
 			else
 				f_x = t.x + (((level % 9) - 1) * 128)

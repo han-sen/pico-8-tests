@@ -27,16 +27,6 @@ end
 function player_update()
 	player.dy += world.gravity
 	player.dx *= world.friction
-	-- -- velocity cap check to add a ceiling to boosts
-	if player.dy > player.mdy then
-		player.dy = player.mdy
-	elseif player.dy < -player.mdy then
-		player.dy = -player.mdy
-	elseif player.dx > player.mdx then
-		player.dx = player.mdx
-	elseif player.dx < -player.mdx then
-		player.dx = -player.mdx
-	end
 	-- player controls
 	if btn(0) then -- left
 		player.dx -= player.acc
@@ -61,6 +51,12 @@ function player_update()
 	-- y axis
 	if map_collide(player, "down", 0) then 
 		player.landed = true
+	end
+	-- check for boost tiles
+	if map_collide(player, 'down', 4) then
+		player.dy = -player.mdy
+		dust_fx(player.x, player.y + player.height, 4, particles.dust_fx, 4)
+		sfx(17)
 	end
 	if player.dy > 0 then -- falling
 		player.falling = true
@@ -88,6 +84,16 @@ function player_update()
 		if map_collide(player, 'right', 0) then
 			player.dx = 0
 		end
+	end
+	-- -- velocity cap check to add a ceiling to boosts
+	if player.dy > player.mdy then
+		player.dy = player.mdy
+	elseif player.dy < -player.mdy then
+		player.dy = -player.mdy
+	elseif player.dx > player.mdx then
+		player.dx = player.mdx
+	elseif player.dx < -player.mdx then
+		player.dx = -player.mdx
 	end
 	-- update the player position
 	player.x += player.dx 
