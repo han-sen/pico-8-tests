@@ -55,17 +55,19 @@ function check_solve() -- check if player has unlocked level
 		player.x = ((n_l % 9) * 128) + player.width
 		player.y = (128 * (n_r - 1)) + 104 -- spawn two tiles up from botton
 		game_camera.cam_x = flr(player.x/128)
-		game_camera.cam_x = flr(player.y/128)
+		game_camera.cam_y = flr(player.y/128)
+		-- add a scene transition particle in the middle of the upcoming level
+		transition_fx(player.x + 4, player.y + 8, 2, particles.transition_fx, 10)
 		bullets = {}
 	end
 end
 
-function check_boost() -- check if on boost tile
-	if map_collide(player, 'down', 4) then
-		player.dy = -player.mdy
-		sfx(17)
-	end
-end
+-- function check_boost() -- check if on boost tile
+-- 	if map_collide(player, 'down', 4) then
+-- 		player.dy = -player.mdy
+-- 		sfx(17)
+-- 	end
+-- end
 
 function check_dmg() -- check if on enemy tile
 	if map_collide(player, 'right', 1) 

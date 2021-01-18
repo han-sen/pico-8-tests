@@ -6,7 +6,8 @@ particles = { -- color tables
     wind_fx = {6,5},
     bubble_fx = {12,1},
     fire_fx = {8,2,0},
-    fire_fx_xl = {8,8,2}
+    fire_fx_xl = {8,8,2},
+    transition_fx = {1,12,1}
 }
 
 function add_fx(x,y,die,dx,dy,grav,grow,shrink,r,c_t)
@@ -168,6 +169,23 @@ function fire_fx(x,y,w,c_t,num)
             true,     
             false,      
             flr(rnd(3)),         
+            c_t  
+        )
+    end
+end
+
+function transition_fx(x,y,w,c_t,num)
+	for i=0, num do
+        add_fx(
+            x+rnd(w)-w/2,
+            y+rnd(w)-w/2,
+            40+rnd(10),
+            -0.125 + (rnd(1)/4),        
+            -0.5,       
+            false,    
+            false,     
+            true,      
+            6,         
             c_t  
         )
     end
