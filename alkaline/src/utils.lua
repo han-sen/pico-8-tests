@@ -56,6 +56,7 @@ function check_solve() -- check if player has unlocked level
 		player.y = (128 * (n_r - 1)) + 104 -- spawn two tiles up from botton
 		game_camera.cam_x = flr(player.x/128)
 		game_camera.cam_y = flr(player.y/128)
+		sfx(18)
 		-- add a scene transition particle in the middle of the upcoming level
 		transition_fx(player.x + 4, player.y + 8, 2, particles.transition_fx, 10)
 		bullets = {}

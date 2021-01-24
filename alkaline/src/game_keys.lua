@@ -46,7 +46,7 @@ game_keys = {
         },
         {
             level = 8,
-            x = 24,
+            x = 32,
             y = 112,
             found = false
         },
@@ -60,6 +60,12 @@ game_keys = {
             level = 10,
             x = 56,
             y = 64,
+            found = false
+        },
+        {
+            level = 11,
+            x = 88,
+            y = 96,
             found = false
         }
     }

@@ -13,12 +13,9 @@ end
 function draw_game_key()
 	local level = world.current_level
 	local k_x, k_y
-	if level == 9 then
-		k_x = game_keys.loc[level].x
+	if level >= 9 then
+		k_x = game_keys.loc[level].x + (( level % 9) * 128)
 		k_y = game_keys.loc[level].y + 128
-	elseif level == 10 then
-		k_x = game_keys.loc[level].x + 128
-		k_y = game_keys.loc[level].y  + 128
 	else
 		k_x = game_keys.loc[level].x + (((level % 9) - 1) * 128)
 		k_y = game_keys.loc[level].y + ((ceil(level / 9) - 1) * 128)
@@ -33,12 +30,9 @@ end
 function draw_fountains()
 	local level = world.current_level
 	local f_x, f_y
-	if level == 9 then
-		f_x = fountains.loc[level].x
+	if level >= 9 then
+		f_x = fountains.loc[level].x + (( level % 9) * 128)
 		f_y = fountains.loc[level].y + 128
-	elseif level == 10 then
-		f_x = fountains.loc[level].x + 128
-		f_y = fountains.loc[level].y  + 128
 	else
 		f_x = fountains.loc[level].x + (((level % 9) - 1) * 128)
 		f_y = fountains.loc[level].y + ((ceil(level / 9) - 1) * 128)

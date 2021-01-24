@@ -48,8 +48,8 @@ function draw_turrets()
 			turrets.sp = 5
 		end
 		local t_x, t_y
-		if level == 9 then
-			t_x = turret.x
+		if level >= 9 then
+			t_x = turret.x + (( level % 9) * 128)
 			t_y = turret.y + 128
 		else
 			t_x = turret.x + (((level % 9) - 1) * 128)
@@ -64,8 +64,8 @@ function draw_turrets()
 		for turret in all(turrets.loc) do 
 			if turret.level == level and turret.active then
 				local f_x, f_y
-				if level == 9 then
-					f_x = turret.x
+				if level >= 9 then
+					f_x = turret.x + (( level % 9) * 128)
 					f_y = turret.y + 128
 				else
 					f_x = turret.x + (((level % 9) - 1) * 128)
