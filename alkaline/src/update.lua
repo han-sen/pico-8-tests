@@ -169,17 +169,18 @@ end
 
 function animate_fountains()
 	if time() - fountains.anim > 0.9 then
+		local level = world.current_level 
 		fountains.anim = time()
 		for f in all(fountains.loc) do
-			if f.level == world.current_level 
+			if f.level == level
 			and f.active then -- only draw active fountains
 				local x, y
-				if world.current_level == 10 then
-					x = f.x + 128 + 8
+				if level >= 9 then
+					x = f.x + (( level % 9) * 128) + 8
 					y = f.y + 128
 				else
-					x = f.x + (world.level_size * (f.level - 1)) + 8 -- emit from middle of sprite
-					y = f.y 
+					x = f.x + (((level % 9) - 1) * 128) + 8
+					y = f.y + ((ceil(level / 9) - 1) * 128)
 				end
 				bubble_fx(x, y, 8, particles.bubble_fx, 2)
 			end
