@@ -13,5 +13,6 @@ function draw_menu()
     draw_fx()
     -- rect(0, 0, 127, 127, 1) -- bg color
     -- rectfill(0, 60, 127, 80, 1) -- text bar
+    print("press x to start / restart", 13, 85, 0)
     print("press x to start / restart", 12, 84, 7)
 end
