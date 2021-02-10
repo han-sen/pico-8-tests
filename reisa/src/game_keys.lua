@@ -73,6 +73,12 @@ game_keys = {
             x = 112,
             y = 88,
             found = false
+        },
+        {
+            level = 13,
+            x = 32,
+            y = 72,
+            found = false
         }
     }
 }

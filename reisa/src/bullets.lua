@@ -25,8 +25,7 @@ function update_bullets()
 			del(bullets, b)
 			death_fx(b.x, b.y, 3, particles.death_fx, 3)
 		end
-		if b.y < game_camera.cam_y 
-		or b.y > game_camera.cam_y + (world.level_size * world.current_row) then
+		if b.level != world.current_level then
 			del(bullets, b)
 		end
 	end
@@ -59,7 +58,7 @@ function draw_turrets()
 			spr(turrets.sp, t_x, t_y, 1, 1, false)
 		end
 	end
-	if time() - turrets.anim > 1.5 then 
+	if time() - turrets.anim > 2.25 then 
 		turrets.anim = time() 
 		for turret in all(turrets.loc) do 
 			if turret.level == level and turret.active then

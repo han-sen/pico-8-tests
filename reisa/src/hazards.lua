@@ -20,7 +20,7 @@ flames = {
 }
 
 turrets = {
-    anim = 0.5,
+    anim = 0,
     sp = 5,
     loc = {
         {
@@ -75,6 +75,11 @@ turrets = {
         {
             level = 12,
             x = 112,
+            y = 48
+        },
+        {
+            level = 13,
+            x = 32,
             y = 48
         }
     }

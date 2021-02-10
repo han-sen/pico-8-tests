@@ -4,7 +4,6 @@ function update_menu()
         state = "playing"
     end
     fire_fx(64, 112, 8, {8, 2, 1}, 2)
-    local menutime = 0
     if time() - world.menu_anim_1 > 1.3 then
         world.menu_anim_1 = time()
         bubble_fx(32, 24, 8, particles.bubble_fx, 1)
@@ -21,8 +20,6 @@ function draw_menu()
     cls()
     map(112, 16)
     draw_fx()
-    -- rect(0, 0, 127, 127, 1) -- bg color
-    -- rectfill(0, 60, 127, 80, 1) -- text bar
     print("press x to start / restart", 13, 85, 0)
     print("press x to start / restart", 12, 84, 7)
 end

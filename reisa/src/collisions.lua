@@ -1,6 +1,6 @@
 -- Collision functions
 
-function bullet_collide(p, b) -- player, bullet
+function bullet_collide(player, b) -- player, bullet
     if
         (b.x > player.x and b.x < player.x + player.width and b.y > player.y and b.y < player.y + player.height) or
             (b.x + 1 > player.x and b.x + 1 < player.x + player.width and b.y + 1 > player.y and

@@ -41,6 +41,9 @@ function check_solve() -- check if player has unlocked level
 		end
 	end
 	if map_collide(player, 'down', 2) and fountains.loc[level].active then -- if solved and jumping into portal
+		-- wipe any existing bullets
+		turrets.anim = 0
+		del(bullets, 1)
 		-- stop momentum
 		player.dx = 0
 		player.dy = 0
@@ -59,7 +62,6 @@ function check_solve() -- check if player has unlocked level
 		sfx(18)
 		-- add a scene transition particle in the middle of the upcoming level
 		transition_fx(player.x + 4, player.y + 8, 2, particles.transition_fx, 10)
-		bullets = {}
 	end
 end
 
@@ -79,6 +81,9 @@ end
 
 function kill_player()
 	game_camera.offset += 1
+	turrets.anim = 0
+	bullets = {}
+	death_count += 1
 	sfx(14)
 	add_ghost()
 	player.sprite = 48
@@ -92,8 +97,6 @@ function kill_player()
 	-- reset key and portal and turrets
 	fountains.loc[world.current_level].active = false
 	game_keys.loc[world.current_level].found = false
-	bullets = {}
-	turrets.anim = 0
 	for turret in all(turrets.loc) do 
 			turret.active = false
 	end
