@@ -1,4 +1,13 @@
 -- DRAW FUNCTIONS
+
+function draw_text()
+	if world.current_level == 1 then
+		print("Jump in the fountain", game_camera.cam_x + 23, game_camera.cam_y + 2, 0)
+		print("Jump in the fountain", game_camera.cam_x + 24, game_camera.cam_y + 3, 7)
+		print("to start the trial", game_camera.cam_x + 27, game_camera.cam_y + 10, 0)
+		print("to start the trial", game_camera.cam_x + 28, game_camera.cam_y + 11, 7)
+	end
+end
  
 function game_key_animate()
 	if time() - game_keys.anim > 0.3 then

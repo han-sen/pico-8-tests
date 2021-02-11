@@ -1,6 +1,7 @@
 function update_menu()
     if btnp(5) then
         -- music(3)
+        effects = {}
         state = "playing"
     end
     fire_fx(64, 112, 8, {8, 2, 1}, 2)
