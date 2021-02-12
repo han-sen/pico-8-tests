@@ -62,6 +62,9 @@ function check_solve() -- check if player has unlocked level
 		sfx(18)
 		-- add a scene transition particle in the middle of the upcoming level
 		transition_fx(player.x + 4, player.y + 8, 2, particles.transition_fx, 10)
+		if level == 13 then
+			finish_time = time()
+		end
 	end
 end
 

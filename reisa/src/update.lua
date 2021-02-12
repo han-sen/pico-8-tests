@@ -77,7 +77,7 @@ function player_update()
 	elseif player.dy < 0 then -- jumping
 		player.jumping = true
 		player.landed = false
-		if map_collide(player, "up", 0) or map_collide(player, "right", 0) or map_collide(player, "left", 0)then
+		if map_collide(player, "up", 0) then
 			player.dy = 0
 		end
 	end

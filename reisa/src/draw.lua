@@ -6,6 +6,16 @@ function draw_text()
 		print("Jump in the fountain", game_camera.cam_x + 24, game_camera.cam_y + 3, 7)
 		print("to start the trial", game_camera.cam_x + 27, game_camera.cam_y + 10, 0)
 		print("to start the trial", game_camera.cam_x + 28, game_camera.cam_y + 11, 7)
+	elseif world.current_level > 1 and world.current_level < 14 then 
+		print("LV-"..world.current_level, game_camera.cam_x + 54, game_camera.cam_y, 7)
+	elseif world.current_level == 14 then
+		local minutes = flr(finish_time / 60)
+		local seconds = flr(finish_time) % 60
+		local f_time = minutes..":"..seconds
+		print("VICTORY", game_camera.cam_x + 50, game_camera.cam_y + 14, 12)
+		print("DEATHS: "..death_count, game_camera.cam_x + 50, game_camera.cam_y + 64, 12)
+		print("TIME: "..f_time, game_camera.cam_x + 50, game_camera.cam_y + 74, 12)
+		print("press x to restart", game_camera.cam_x + 28, game_camera.cam_y + 96, 7)
 	end
 end
  
