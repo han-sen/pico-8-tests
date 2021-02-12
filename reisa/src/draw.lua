@@ -12,7 +12,7 @@ function draw_text()
 		local minutes = flr(finish_time / 60)
 		local seconds = flr(finish_time) % 60
 		local f_time = minutes..":"..seconds
-		print("VICTORY", game_camera.cam_x + 50, game_camera.cam_y + 14, 12)
+		print("victory", game_camera.cam_x + 50, game_camera.cam_y + 14, 12)
 		print("DEATHS: "..death_count, game_camera.cam_x + 50, game_camera.cam_y + 64, 12)
 		print("TIME: "..f_time, game_camera.cam_x + 50, game_camera.cam_y + 74, 12)
 		print("press x to restart", game_camera.cam_x + 28, game_camera.cam_y + 96, 7)
