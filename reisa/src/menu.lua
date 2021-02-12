@@ -1,6 +1,6 @@
 function update_menu()
     if btnp(5) then
-        -- music(3)
+        music(3)
         effects = {}
         state = "playing"
     end

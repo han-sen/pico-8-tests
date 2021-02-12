@@ -23,7 +23,7 @@ __lua__
 #include src/menu.lua
 
 function _init()
-	-- music(2)
+	music(2)
 	state = 'menu'
 	player = player
 	game_keys = game_keys
@@ -278,7 +278,7 @@ __sfx__
 __music__
 03 41024301
 02 01020344
-03 41061406
+03 41061446
 01 06014f0d
 02 06010944
 03 01060944
