@@ -11,6 +11,9 @@ function draw_text()
 	elseif world.current_level == 14 then
 		local minutes = flr(finish_time / 60)
 		local seconds = flr(finish_time) % 60
+		if seconds < 10 then
+			seconds = "0"..seconds
+		end
 		local f_time = minutes..":"..seconds
 		print("victory", game_camera.cam_x + 50, game_camera.cam_y + 14, 12)
 		print("DEATHS: "..death_count, game_camera.cam_x + 50, game_camera.cam_y + 64, 12)
