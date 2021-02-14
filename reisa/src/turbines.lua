@@ -51,12 +51,12 @@ turbines = {
         {
             level = 5,
             x = 16,
-            y = 56
+            y = 64
         },
         {
             level = 5,
             x = 40,
-            y = 88
+            y = 96
         },
         {
             level = 6,
